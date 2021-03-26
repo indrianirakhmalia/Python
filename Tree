@@ -1,0 +1,79 @@
+# From Logistic Regression file
+
+#import the library
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+tree=DecisionTreeClassifier(max_depth=3,min_samples_leaf=75)
+eval(tree)
+
+#making plot tree
+from sklearn.externals.six import StringIO  
+from IPython.display import Image  
+from sklearn.tree import export_graphviz
+import pydotplus
+from graphviz import Digraph
+from matplotlib import pyplot as plt
+from sklearn import datasets
+from sklearn.tree import DecisionTreeClassifier 
+from sklearn import tree
+from sklearn.tree import DecisionTreeRegressor
+from dtreeviz.trees import dtreeviz 
+
+dot_data = StringIO()
+export_graphviz(dtree, out_file=dot_data,  
+                filled=True, rounded=True,
+                special_characters=True, class_names=['0','1'])
+                
+tree.export_graphviz(tree)
+
+#OR
+feature_names = ['usia']+list(datatree_label)[3:]
+target_names = data['Tertarik beli?']
+
+tree.fit(X_train,y_train)
+data_train.feature_names=feature_names
+
+viz = dtreeviz(tree, 
+               X_train, 
+               y_train,
+                target_name='Tertarik beli?',
+                feature_names=data_train.feature_names, 
+              class_names=["yes", "no"])
+
+
+# see importance variable
+importance=tree.feature_importances_
+
+# summarize feature importance
+for i,v in enumerate(importance):
+	print('Feature: %0d, Score: %.5f' % (i,v))
+  
+
+from matplotlib import pyplot
+# plot feature importance
+pyplot.bar([x for x in range(len(importance))], importance)
+pyplot.show()
+
+#RANDOM FOREST
+
+rf=RandomForestClassifier(n_estimators=500,max_features=3) #max_ficture akar dari peubah itu banyaknya sampel buat peubah
+rf = RandomForestClassifier()
+rf.fit(X_train,y_train)
+
+predictions = rf.predict(X_test)
+errors = abs(predictions - y_test)
+print('Mean Absolute Error:', round(np.mean(errors), 2), 'degrees.')
+
+# Calculate mean absolute percentage error (MAPE)
+mape = 100 * (errors / y_test)
+
+#akurasi data test
+rf.score(X_test,y_test)
+
+#akurasi data train
+rf.score(X_train,y_train)
+
+eval(rf)
+
+
