@@ -1,0 +1,90 @@
+#call libraries
+import pandas as pd
+import numpy as np
+
+#import data
+datatree_label = pd.read_csv('D:/datatree_label.csv') 
+datatree_nolabel = pd.read_csv('D:/datatree_nolabel.csv') #without label 
+
+datatree_label.head()
+datatree_nolabel.head()
+
+datatree_nolabel['Tertarik Beli?'] = 9999
+datatree_nolabel.head()
+
+datatree = datatree_label.append(datatree_nolabel) 
+
+#see dimention of data
+datatree.shape
+
+## define the value from variable
+datatree['Jenis Kelamin'] = datatree['Jenis Kelamin'].map({1:'Laki-Laki',
+                                                           0:'Perempuan'})
+datatree['Single'] = datatree['Single'].map({1:'Single',
+                                             0:'Tidak Single'})
+datatree['Tinggal di Kota'] = datatree['Tinggal di Kota'].map({1:'Tinggal di kota',
+                                                               0:'Tinggal di pedesaan'})
+datatree['Perokok'] = datatree['Perokok'].map({1:'Perokok',
+                                               0:'Bukan Perokok'})
+
+#make dummy varible
+list(datatree)
+datatree_dummy=pd.get_dummies(datatree,drop_first=True)
+datatree_label=datatree_dummy[datatree_dummy['Tertarik Beli?']<100]
+datatree_nolabel=datatree_dummy[datatree_dummy['Tertarik Beli?']>100]
+datatree_label.head()
+datatree_nolabel.head()
+
+#splitting data
+peubah=['usia']+list(datatree_label)[3:]
+X=datatree_label[peubah]
+y=datatree_label['Tertarik Beli?']
+
+#call the library
+from sklearn.model_selection import train_test_split #library data training testing
+from sklearn.linear_model import LogisticRegression
+
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,stratify=y,random_state=100)
+
+#Logistic Regression
+logreg=LogisticRegression()
+logreg.fit(X_train, y_train)
+
+#Akurasi Data Test
+logreg.score(X_test, y_test)
+
+#Akurasi Data Train
+logreg.score(X_train, y_train)
+
+from sklearn.model_selection import cross_val_score,StratifiedKFold,KFold
+
+skf=StratifiedKFold(n_splits=5)
+logreg_cv=cross_val_score(logreg,X_train,y_train,cv=skf)
+
+logreg_cv
+logreg_cv.mean() #rata rata semua 
+
+def eval (model):
+    model.fit(X_train,y_train)
+    print('Skor Test :\n',model.score(X_test,y_test))
+    print('Skor Train :\n',model.score(X_train,y_train))
+    
+    skf=StratifiedKFold(n_splits=5, random_state=10)
+    model_cv=cross_val_score(model,X_train,y_train,cv=skf)
+    
+    print('Skor CV :\n',model_cv)
+    print('Skor Rataan CV :\n',model_cv.mean)
+    
+eval(logreg)
+
+#show model reglog
+import statsmodels.api as sm
+
+logit_model=sm.Logit(y,X)
+hasil=logit_model.fit()
+print(hasil.summary())
+
+logreg.predict(X_test)
+
+
+
